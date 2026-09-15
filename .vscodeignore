@@ -3,3 +3,6 @@
 src/**
 .gitignore
 *.ts
+cloudflare-worker/node_modules/**
+cloudflare-worker/package-lock.json
+cloudflare-worker/.wrangler/**

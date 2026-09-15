@@ -41,7 +41,8 @@ export default {
     const result = await env.AI.run(env.MODEL, {
       messages: body.messages,
       temperature: body.temperature ?? 0.15,
-      max_tokens: Math.min(body.max_tokens ?? 4096, 8192)
+      max_tokens: Math.min(body.max_tokens ?? 4096, 8192),
+      response_format: { type: "json_object" }
     }) as AiResponse;
     const content = result.response ?? "";
     return json({

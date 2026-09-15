@@ -95,9 +95,9 @@ async function runAgent(prompt: string): Promise<AgentResult> {
   }
   let result: AgentResult;
   try {
-    result = JSON.parse(content) as AgentResult;
+    result = parseJson<AgentResult>(content);
   } catch {
-    throw new Error("a IA não retornou JSON válido; tente novamente");
+    throw new Error("a IA respondeu em um formato inválido. Tente novamente com um pedido menor.");
   }
   for (const action of result.actions ?? []) {
     if (action.type === "write_file") {
@@ -107,6 +107,20 @@ async function runAgent(prompt: string): Promise<AgentResult> {
     }
   }
   return result;
+}
+
+function parseJson<T>(content: string): T {
+  const cleaned = content.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+  try {
+    return JSON.parse(cleaned) as T;
+  } catch {
+    const start = cleaned.indexOf("{");
+    const end = cleaned.lastIndexOf("}");
+    if (start < 0 || end <= start) {
+      throw new Error("JSON ausente");
+    }
+    return JSON.parse(cleaned.slice(start, end + 1)) as T;
+  }
 }
 
 function safePath(path: string): string {

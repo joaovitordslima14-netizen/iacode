@@ -57,7 +57,7 @@ export async function generateProject(request: ProjectRequest): Promise<Generate
 
   let parsed: { files?: GeneratedFile[] };
   try {
-    parsed = JSON.parse(content);
+    parsed = parseJson<{ files?: GeneratedFile[] }>(content);
   } catch {
     throw new Error("A IA não retornou JSON válido. Tente novamente com um modelo que siga instruções JSON.");
   }
@@ -66,4 +66,18 @@ export async function generateProject(request: ProjectRequest): Promise<Generate
     throw new Error("A IA retornou um formato de projeto inválido.");
   }
   return parsed.files;
+}
+
+function parseJson<T>(content: string): T {
+  const cleaned = content.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+  try {
+    return JSON.parse(cleaned) as T;
+  } catch {
+    const start = cleaned.indexOf("{");
+    const end = cleaned.lastIndexOf("}");
+    if (start < 0 || end <= start) {
+      throw new Error("JSON ausente");
+    }
+    return JSON.parse(cleaned.slice(start, end + 1)) as T;
+  }
 }

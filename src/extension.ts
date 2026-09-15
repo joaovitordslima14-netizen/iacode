@@ -87,8 +87,12 @@ async function writeProject(root: vscode.Uri, files: Array<{ path: string; conte
       parent = vscode.Uri.joinPath(parent, part);
       await vscode.workspace.fs.createDirectory(parent);
     }
-    await vscode.workspace.fs.writeFile(uri, Buffer.from(file.content, "utf8"));
+    await vscode.workspace.fs.writeFile(uri, Buffer.from(normalizeGeneratedContent(file.content), "utf8"));
   }
+}
+
+function normalizeGeneratedContent(content: string): string {
+  return content.replace(/\\r\\n/g, "\r\n").replace(/\\n/g, "\n").replace(/\\t/g, "\t");
 }
 
 export function deactivate(): void {}

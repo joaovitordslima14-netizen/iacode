@@ -2,7 +2,7 @@
   "name": "iacode",
   "displayName": "IAcode",
   "description": "Gere aplicativos e sites no VS Code a partir de uma ideia e das linguagens escolhidas.",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "publisher": "codenova-labs",
   "license": "MIT",
   "repository": {

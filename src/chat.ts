@@ -104,7 +104,8 @@ async function runAgent(prompt: string): Promise<AgentResult> {
   try {
     result = parseJson<AgentResult>(content);
   } catch {
-    throw new Error("a IA respondeu em um formato inválido. Tente novamente com um pedido menor.");
+    const preview = content.replace(/\s+/g, " ").slice(0, 180);
+    throw new Error(`a IA não retornou JSON. Resposta recebida: ${preview || "vazia"}`);
   }
   for (const action of result.actions ?? []) {
     if (action.type === "write_file") {

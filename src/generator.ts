@@ -60,7 +60,8 @@ export async function generateProject(request: ProjectRequest): Promise<Generate
   try {
     parsed = parseJson<{ files?: GeneratedFile[] }>(content);
   } catch {
-    throw new Error("A IA respondeu em formato inválido. Instale o IAcode 0.4.4 e tente novamente com um pedido menor.");
+    const preview = content.replace(/\s+/g, " ").slice(0, 180);
+    throw new Error(`A IA não retornou JSON. Resposta recebida: ${preview || "vazia"}`);
   }
 
   if (!Array.isArray(parsed.files) || parsed.files.length === 0 || parsed.files.some((file) => !file.path || typeof file.content !== "string")) {

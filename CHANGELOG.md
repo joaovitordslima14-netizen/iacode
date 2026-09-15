@@ -2,6 +2,12 @@
 
 O IAcode segue versionamento semântico: `MAJOR.MINOR.PATCH`.
 
+## Próxima versão planejada
+
+- Runtime de inferência local controlado pelo IAcode.
+- Modelo de código sem dependência de API externa.
+- Configuração para modo offline e distribuição do modelo.
+
 ## [0.3.0] - 2026-09-15
 
 ### Adicionado

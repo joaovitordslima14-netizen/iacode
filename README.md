@@ -160,6 +160,7 @@ O modelo deve aceitar `POST /chat/completions` e retornar uma resposta com `choi
 
 - [Guia de uso](docs/USAGE.md)
 - [Documentação técnica](docs/TECHNICAL.md)
+- [Arquitetura da IA própria](docs/SELF_HOSTED_AI.md)
 - [Plano para versão online independente](ONLINE_SYSTEM_PLAN.txt)
 - [Histórico de versões](CHANGELOG.md)
 

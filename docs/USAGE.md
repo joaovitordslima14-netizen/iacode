@@ -1,5 +1,7 @@
 # Como usar o IAcode
 
+> **Estado atual:** a versão `0.3.0` ainda precisa de um provedor compatível com OpenAI. A IA própria, executada pelo IAcode sem OpenAI, Copilot ou Ollama, está definida em [SELF_HOSTED_AI.md](SELF_HOSTED_AI.md) e exige a integração de um runtime e de um modelo local.
+
 ## O que é
 
 O IAcode é uma extensão que abre um chat próprio dentro do VS Code. Você descreve o sistema e a IA cria ou altera arquivos na pasta aberta. As mensagens desse chat não usam o saldo do Chat do Copilot.

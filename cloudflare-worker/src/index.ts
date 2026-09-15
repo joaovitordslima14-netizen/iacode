@@ -43,13 +43,28 @@ export default {
       result = await env.AI.run(env.MODEL, {
         messages: body.messages,
         temperature: body.temperature ?? 0.15,
-        max_tokens: Math.min(body.max_tokens ?? 4096, 4096)
+        max_tokens: Math.min(body.max_tokens ?? 8192, 8192)
       }) as AiResponse;
     } catch (error) {
       const detail = error instanceof Error ? error.message : "Workers AI failed";
       return json({ error: { message: `Workers AI: ${detail}` } }, 502);
     }
-    const content = normalizeModelResponse(result.response ?? "");
+    let content = normalizeModelResponse(result.response ?? "");
+    if (!isJson(content)) {
+      try {
+        const repaired = await env.AI.run(env.MODEL, {
+          messages: [
+            { role: "system", content: "Converta a resposta abaixo para JSON válido. Preserve o conteúdo e corrija aspas, quebras de linha e caracteres escapados. Responda SOMENTE o objeto JSON, sem markdown. Se a resposta estiver grande demais, reduza o conteúdo mantendo os arquivos essenciais." },
+            { role: "user", content: result.response ?? "" }
+          ],
+          temperature: 0,
+          max_tokens: 8192
+        }) as AiResponse;
+        content = normalizeModelResponse(repaired.response ?? "");
+      } catch {
+        return json({ error: { message: "Workers AI não conseguiu produzir JSON válido após uma tentativa de reparo." } }, 502);
+      }
+    }
     return json({
       id: `iacode-${crypto.randomUUID()}`,
       object: "chat.completion",
@@ -85,6 +100,15 @@ function normalizeModelResponse(content: string): string {
       }
     }
     return cleaned;
+  }
+}
+
+function isJson(content: string): boolean {
+  try {
+    JSON.parse(content);
+    return true;
+  } catch {
+    return false;
   }
 }
 

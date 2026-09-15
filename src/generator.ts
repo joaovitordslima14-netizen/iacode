@@ -32,6 +32,7 @@ export async function generateProject(request: ProjectRequest): Promise<Generate
     body: JSON.stringify({
       model,
       temperature: 0.2,
+      max_tokens: 8192,
       messages: [
         {
           role: "system",
@@ -39,7 +40,7 @@ export async function generateProject(request: ProjectRequest): Promise<Generate
         },
         {
           role: "user",
-          content: `Crie a primeira versão funcional de um projeto.\nTipo: ${request.projectType}\nIdeia: ${request.idea}\nTecnologias escolhidas: ${request.languages.join(", ")}\nInclua arquivos de configuração, código principal, estilos e um README com instruções para executar. Mantenha o escopo implementável e use nomes de arquivos convencionais.`
+          content: `Crie a primeira versão funcional de um projeto.\nTipo: ${request.projectType}\nIdeia: ${request.idea}\nTecnologias escolhidas: ${request.languages.join(", ")}\nInclua arquivos de configuração, código principal, estilos e um README com instruções para executar. Mantenha o escopo implementável e use nomes de arquivos convencionais. Retorne somente JSON válido, sem markdown, introdução ou texto antes/depois do objeto.`
         }
       ]
     })
@@ -59,7 +60,7 @@ export async function generateProject(request: ProjectRequest): Promise<Generate
   try {
     parsed = parseJson<{ files?: GeneratedFile[] }>(content);
   } catch {
-    throw new Error("A IA não retornou JSON válido. Tente novamente com um modelo que siga instruções JSON.");
+    throw new Error("A IA respondeu em formato inválido. Instale o IAcode 0.4.4 e tente novamente com um pedido menor.");
   }
 
   if (!Array.isArray(parsed.files) || parsed.files.length === 0 || parsed.files.some((file) => !file.path || typeof file.content !== "string")) {

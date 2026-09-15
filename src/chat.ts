@@ -75,13 +75,14 @@ async function runAgent(prompt: string): Promise<AgentResult> {
     body: JSON.stringify({
       model,
       temperature: 0.15,
+      max_tokens: 8192,
       messages: [
         {
           role: "system",
           content: "Você é o IAcode, um agente de desenvolvimento. Responda SOMENTE JSON válido no formato {\"message\":\"resposta em Markdown\",\"actions\":[{\"type\":\"write_file\" ou \"read_file\",\"path\":\"caminho relativo\",\"content\":\"conteúdo quando write_file\"}]}. Você pode criar e alterar arquivos do workspace. Nunca use caminhos absolutos, .., arquivos binários ou comandos de terminal."
         },
         ...conversation,
-        { role: "user", content: `Pedido atual: ${prompt}\nArquivos do workspace:\n${files.map((file) => vscode.workspace.asRelativePath(file)).join("\n") || "workspace vazio"}` }
+        { role: "user", content: `Pedido atual: ${prompt}\nArquivos do workspace:\n${files.map((file) => vscode.workspace.asRelativePath(file)).join("\n") || "workspace vazio"}\n\nRetorne somente JSON válido. Não escreva introdução, explicação ou markdown fora do JSON.` }
       ]
     })
   });

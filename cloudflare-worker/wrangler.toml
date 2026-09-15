@@ -1,0 +1,12 @@
+name = "iacode-lua-pequena-2cea"
+main = "src/index.ts"
+compatibility_date = "2026-09-15"
+
+[ai]
+binding = "AI"
+
+[vars]
+MODEL = "@cf/meta/llama-3.2-3b-instruct"
+
+[observability]
+enabled = true

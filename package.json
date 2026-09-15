@@ -35,13 +35,13 @@
       "properties": {
         "iacode.providerUrl": {
           "type": "string",
-          "default": "",
+          "default": "https://iacode-lua-pequena-2cea.joaovitor-dslima14.workers.dev/v1",
           "description": "URL base da API de IA hospedada na nuvem.",
           "scope": "machine-overridable"
         },
         "iacode.model": {
           "type": "string",
-          "default": "",
+          "default": "@cf/meta/llama-3.2-3b-instruct",
           "description": "Modelo usado para gerar o projeto.",
           "scope": "machine-overridable"
         },

@@ -1,0 +1,69 @@
+{
+  "name": "iacode",
+  "displayName": "IAcode",
+  "description": "Gere aplicativos e sites no VS Code a partir de uma ideia e das linguagens escolhidas.",
+  "version": "0.3.0",
+  "publisher": "codenova-labs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codenova-labs/iacode.git"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other",
+    "Programming Languages"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "iacode.createProject",
+        "title": "IAcode: Criar projeto com IA",
+        "category": "IAcode"
+      },
+      {
+        "command": "iacode.openChat",
+        "title": "IAcode: Abrir chat independente",
+        "category": "IAcode"
+      }
+    ],
+    "configuration": {
+      "title": "IAcode",
+      "properties": {
+        "iacode.providerUrl": {
+          "type": "string",
+          "default": "http://localhost:11434/v1",
+          "description": "URL base de uma API compatível com OpenAI.",
+          "scope": "machine-overridable"
+        },
+        "iacode.model": {
+          "type": "string",
+          "default": "llama3.1",
+          "description": "Modelo usado para gerar o projeto.",
+          "scope": "machine-overridable"
+        },
+        "iacode.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Chave da API. Deixe vazio para provedores locais.",
+          "scope": "machine-overridable",
+          "password": true
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "npm run compile && vsce package --no-dependencies --allow-missing-repository"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.90.0",
+    "typescript": "^5.5.0",
+    "@vscode/vsce": "^3.2.1"
+  }
+}

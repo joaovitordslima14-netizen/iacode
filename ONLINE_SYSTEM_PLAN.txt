@@ -1,0 +1,99 @@
+IAcode como sistema online independente do VS Code
+
+Objetivo
+=======
+Transformar o IAcode em um produto web acessado pelo navegador, sem exigir VS Code, F5, Extension Development Host ou instalação local. O usuário entra em uma página, descreve o app e acompanha a IA criando o projeto.
+
+Arquitetura recomendada
+=======================
+
+1. Frontend web
+   - React + TypeScript + Vite ou Next.js.
+   - Tela de login, novo projeto, chat, arquivos, preview e histórico.
+   - Atualização em tempo real por WebSocket ou Server-Sent Events.
+
+2. API do IAcode
+   - Node.js + TypeScript + Fastify ou NestJS.
+   - Endpoints para projetos, mensagens, arquivos e tarefas.
+   - Orquestrador que chama o modelo, valida ações e executa tarefas em um workspace isolado.
+
+3. Banco de dados
+   - PostgreSQL para usuários, projetos, mensagens, configurações e auditoria.
+   - Redis opcional para filas e sessões temporárias.
+
+4. Execução isolada
+   - Cada projeto deve usar um container ou sandbox separado.
+   - Limite de CPU, memória, tempo, rede e espaço em disco.
+   - Nunca execute código enviado pela IA diretamente no processo principal da API.
+
+5. Armazenamento e GitHub
+   - S3, Cloudflare R2 ou armazenamento equivalente para arquivos e artefatos.
+   - OAuth do GitHub para criar repositórios e fazer commits com autorização explícita.
+
+6. Publicação
+   - Render pode hospedar a API, frontend e workers.
+   - PostgreSQL gerenciado do Render pode armazenar os dados.
+   - GitHub deve armazenar o código e iniciar deploy automático por push.
+
+Fluxo do usuário
+================
+
+1. Criar conta ou entrar.
+2. Escolher "Novo projeto".
+3. Informar a ideia, tipo de produto, linguagens, framework, banco e hospedagem.
+4. A IA produzir um plano e pedir aprovação.
+5. O worker criar os arquivos em sandbox.
+6. Instalar dependências e executar testes dentro da sandbox.
+7. Mostrar diff, logs e preview.
+8. Permitir aprovar alterações.
+9. Criar repositório no GitHub ou baixar ZIP.
+10. Publicar no Render mediante confirmação.
+
+Segredos e custos
+=================
+
+- Chaves de provedores devem ficar apenas no backend, em variáveis secretas.
+- Nunca exponha uma chave de IA no JavaScript do navegador.
+- Use limites de uso por usuário, projeto e período.
+- Registre consumo de tokens e custos.
+- Considere Ollama para desenvolvimento local e um provedor pago para produção.
+
+Implementação por fases
+=======================
+
+Fase 1: produto mínimo
+- Frontend de chat.
+- API Node.js.
+- Um provedor de IA.
+- Upload/download de projeto.
+- Persistência PostgreSQL.
+
+Fase 2: agente real
+- Ferramentas de leitura, escrita, terminal e testes.
+- Aprovação de ações perigosas.
+- Sandbox por projeto.
+- Streaming de eventos e logs.
+
+Fase 3: GitHub e Render
+- Login GitHub OAuth.
+- Criação de repositório.
+- Deploy via API ou webhook.
+- Variáveis de ambiente por projeto.
+- Status de build e rollback.
+
+Fase 4: produto comercial
+- Equipes e permissões.
+- Planos e limites.
+- Observabilidade, backups e auditoria.
+- Templates de stacks.
+- Proteção contra prompt injection e exfiltração de segredos.
+
+O que permanece da extensão
+===========================
+
+A extensão atual pode continuar como modo local para usuários que preferem trabalhar no VS Code. O sistema online deve reutilizar o contrato do agente, mas o backend deverá controlar autenticação, histórico, ferramentas, sandbox e segredos.
+
+Conclusão
+=========
+
+Para ser totalmente independente do VS Code, o IAcode precisa deixar de ser apenas uma extensão e ganhar frontend web, API, banco, workers e sandbox. O Render é adequado para o primeiro deploy, enquanto GitHub funciona como repositório e gatilho de publicação. A extensão local e o sistema online podem compartilhar o mesmo backend e o mesmo contrato de ações.

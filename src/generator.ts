@@ -17,9 +17,12 @@ interface ChatResponse {
 
 export async function generateProject(request: ProjectRequest): Promise<GeneratedFile[]> {
   const config = vscode.workspace.getConfiguration("iacode");
-  const providerUrl = config.get<string>("providerUrl", "http://localhost:11434/v1").replace(/\/$/, "");
-  const model = config.get<string>("model", "llama3.1");
+  const providerUrl = config.get<string>("providerUrl", "").replace(/\/$/, "");
+  const model = config.get<string>("model", "");
   const apiKey = config.get<string>("apiKey", "");
+  if (!providerUrl || !model) {
+    throw new Error("Configure IAcode: Provider Url e IAcode: Model com o endpoint cloud do IAcode.");
+  }
   const response = await fetch(`${providerUrl}/chat/completions`, {
     method: "POST",
     headers: {

@@ -47,7 +47,8 @@ export async function generateProject(request: ProjectRequest): Promise<Generate
   });
 
   if (!response.ok) {
-    throw new Error(`O provedor retornou HTTP ${response.status}. Verifique iacode.providerUrl e iacode.apiKey.`);
+    const detail = await response.text();
+    throw new Error(`O provedor retornou HTTP ${response.status}: ${detail.slice(0, 400)}`);
   }
 
   const payload = await response.json() as ChatResponse;

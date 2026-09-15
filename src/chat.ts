@@ -93,7 +93,8 @@ async function runAgent(prompt: string): Promise<AgentResult> {
     })
   });
   if (!response.ok) {
-    throw new Error(`o provedor retornou HTTP ${response.status}`);
+    const detail = await response.text();
+    throw new Error(`o provedor retornou HTTP ${response.status}: ${detail.slice(0, 400)}`);
   }
   const payload = await response.json() as ChatResponse;
   const content = payload.choices?.[0]?.message?.content;

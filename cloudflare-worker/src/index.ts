@@ -15,6 +15,8 @@ interface AiResponse {
   response?: string;
 }
 
+const fileFormatInstruction = "Formato obrigatório: responda com blocos no formato <<<FILE: caminho/arquivo>>> seguido do conteúdo literal e finalize cada bloco com <<<END FILE>>>. Exemplo: <<<FILE: README.md>>>\n# Título\n<<<END FILE>>>. Não use JSON, markdown externo ou explicações fora dos blocos.";
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === "OPTIONS") {
@@ -54,15 +56,15 @@ export default {
       try {
         const repaired = await env.AI.run(env.MODEL, {
           messages: [
-            { role: "system", content: "Converta a resposta abaixo para JSON válido. Preserve o conteúdo e corrija aspas, quebras de linha e caracteres escapados. Responda SOMENTE o objeto JSON, sem markdown. Se a resposta estiver grande demais, reduza o conteúdo mantendo os arquivos essenciais." },
+            { role: "system", content: `Converta a resposta abaixo para blocos de arquivos. ${fileFormatInstruction}` },
             { role: "user", content: result.response ?? "" }
           ],
           temperature: 0,
           max_tokens: 8192
         }) as AiResponse;
-        content = normalizeModelResponse(repaired.response ?? "");
+        content = parseFileBlocks(repaired.response ?? "");
       } catch {
-        return json({ error: { message: "Workers AI não conseguiu produzir JSON válido após uma tentativa de reparo." } }, 502);
+        return json({ error: { message: "Workers AI não conseguiu estruturar os arquivos. Tente enviar um pedido menor." } }, 502);
       }
     }
     return json({
@@ -110,6 +112,15 @@ function isJson(content: string): boolean {
   } catch {
     return false;
   }
+}
+
+function parseFileBlocks(content: string): string {
+  const files = [...content.matchAll(/<<<FILE:\s*([^>]+?)>>>\s*([\s\S]*?)<<<END FILE>>>/gi)]
+    .map((match) => ({ path: match[1].trim(), content: match[2].replace(/^\r?\n/, "") }));
+  if (files.length === 0) {
+    throw new Error("Nenhum bloco de arquivo encontrado");
+  }
+  return JSON.stringify({ files });
 }
 
 function corsHeaders(): Record<string, string> {

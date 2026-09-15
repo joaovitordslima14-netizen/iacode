@@ -6,7 +6,7 @@ compatibility_date = "2026-09-15"
 binding = "AI"
 
 [vars]
-MODEL = "@cf/qwen/qwen2.5-coder-32b-instruct"
+MODEL = "@cf/meta/llama-3.2-3b-instruct"
 
 [observability]
 enabled = true

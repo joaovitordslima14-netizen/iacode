@@ -38,12 +38,17 @@ export default {
       return json({ error: { message: "messages is required" } }, 400);
     }
 
-    const result = await env.AI.run(env.MODEL, {
-      messages: body.messages,
-      temperature: body.temperature ?? 0.15,
-      max_tokens: Math.min(body.max_tokens ?? 8192, 8192),
-      response_format: { type: "json_object" }
-    }) as AiResponse;
+    let result: AiResponse;
+    try {
+      result = await env.AI.run(env.MODEL, {
+        messages: body.messages,
+        temperature: body.temperature ?? 0.15,
+        max_tokens: Math.min(body.max_tokens ?? 4096, 4096)
+      }) as AiResponse;
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : "Workers AI failed";
+      return json({ error: { message: `Workers AI: ${detail}` } }, 502);
+    }
     const content = normalizeModelResponse(result.response ?? "");
     return json({
       id: `iacode-${crypto.randomUUID()}`,

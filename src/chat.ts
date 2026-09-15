@@ -85,7 +85,7 @@ async function runAgent(prompt: string): Promise<AgentResult> {
       messages: [
         {
           role: "system",
-          content: "Você é o IAcode, um agente de desenvolvimento. Responda SOMENTE JSON válido no formato {\"message\":\"resposta em Markdown\",\"actions\":[{\"type\":\"write_file\" ou \"read_file\",\"path\":\"caminho relativo\",\"content\":\"conteúdo quando write_file\"}]}. Você pode criar e alterar arquivos do workspace. Nunca use caminhos absolutos, .., arquivos binários ou comandos de terminal."
+          content: "Você é o IAcode, um agente de desenvolvimento. Responda SOMENTE JSON válido no formato {\"message\":\"resposta\",\"actions\":[{\"type\":\"write_file\",\"path\":\"caminho relativo\",\"content\":\"conteúdo\"}]}. Você pode criar e alterar arquivos do workspace. Nunca use caminhos absolutos, .., arquivos binários ou comandos de terminal."
         },
         ...conversation,
         { role: "user", content: `Briefing inicial:\n${projectBrief}\n\nPedido atual:\n${prompt}\n\nArquivos e conteúdo atual:\n${workspaceContext}\n\nRetorne somente JSON válido. Não escreva introdução, explicação ou markdown fora do JSON. Na primeira solicitação, implemente o briefing em etapas pequenas. Nas próximas, corrija o que já existe sem recriar arquivos desnecessariamente.` }

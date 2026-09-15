@@ -44,7 +44,7 @@ export default {
       max_tokens: Math.min(body.max_tokens ?? 8192, 8192),
       response_format: { type: "json_object" }
     }) as AiResponse;
-    const content = result.response ?? "";
+    const content = normalizeModelResponse(result.response ?? "");
     return json({
       id: `iacode-${crypto.randomUUID()}`,
       object: "chat.completion",
@@ -60,6 +60,27 @@ function json(value: unknown, status: number): Response {
     status,
     headers: { "Content-Type": "application/json", ...corsHeaders() }
   });
+}
+
+function normalizeModelResponse(content: string): string {
+  const cleaned = content.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+  try {
+    JSON.parse(cleaned);
+    return cleaned;
+  } catch {
+    const start = cleaned.indexOf("{");
+    const end = cleaned.lastIndexOf("}");
+    if (start >= 0 && end > start) {
+      const candidate = cleaned.slice(start, end + 1);
+      try {
+        JSON.parse(candidate);
+        return candidate;
+      } catch {
+        return cleaned;
+      }
+    }
+    return cleaned;
+  }
 }
 
 function corsHeaders(): Record<string, string> {

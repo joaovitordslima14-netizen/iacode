@@ -2,7 +2,7 @@
   "name": "iacode",
   "displayName": "IAcode",
   "description": "Gere aplicativos e sites no VS Code a partir de uma ideia e das linguagens escolhidas.",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "publisher": "codenova-labs",
   "license": "MIT",
   "repository": {
@@ -41,7 +41,7 @@
         },
         "iacode.model": {
           "type": "string",
-          "default": "@cf/meta/llama-3.2-3b-instruct",
+          "default": "@cf/qwen/qwen2.5-coder-32b-instruct",
           "description": "Modelo usado para gerar o projeto.",
           "scope": "machine-overridable"
         },
